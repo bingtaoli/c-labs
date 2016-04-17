@@ -16,8 +16,8 @@
 
 ### reverse list
 
-<img src="img/cloudwu_reverselist.jpg" width="80%">
+<img src="img/cloudwu_reverselist.jpg" width="85%">
 
-翻到这个博客，花了10分钟左右写了翻转链表的代码。
+翻到这个[微博](http://weibo.com/2388714105/DjvJZC1Qc?from=page_1005052388714105_profile&wvr=6&mod=weibotime&type=comment)，花了10分钟左右写了翻转链表的代码。
 
 见`reverse_list`目录
