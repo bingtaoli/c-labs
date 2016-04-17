@@ -13,3 +13,11 @@
 看[一篇介绍php的博文中的简单hash样例](http://www.php-internals.com/book/?p=chapt03/03-01-01-hashtable),原作者的代码也在[github](https://github.com/reeze/tipi/tree/master/book/sample/chapt03/03-01-01-hashtable)上，我这就拿来一份作为自己的工具.
 
 见`simple-hash`目录
+
+### reverse list
+
+<img src="img/cloudwu_reverselist.jpg" width="80%">
+
+翻到这个博客，花了10分钟左右写了翻转链表的代码。
+
+见`reverse_list`目录
