@@ -21,3 +21,10 @@
 翻到这个[微博](http://weibo.com/2388714105/DjvJZC1Qc?from=page_1005052388714105_profile&wvr=6&mod=weibotime&type=comment)，花了10分钟左右写了翻转链表的代码。
 
 见`reverse_list`目录
+
+### linux process communication
+
+linux进程间通信，可以看看个人博客中的读书笔记。
+
++ 消息队列，见`linux_process_communication/msgtest.c`文件。在该文件中只是使用了简单地使用了消息队列进行读写，并未涉及进程间的通信:)，以后有时间补上。
++ 共享内存，见`linux_process_communication/shmtest.c`文件。
