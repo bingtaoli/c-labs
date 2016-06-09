@@ -28,3 +28,48 @@ linux进程间通信，可以看看个人博客中的读书笔记。
 
 + 消息队列，见`linux_process_communication/msgtest.c`文件。在该文件中只是使用了简单地使用了消息队列进行读写，并未涉及进程间的通信:)，以后有时间补上。
 + 共享内存，见`linux_process_communication/shmtest.c`文件。
+
+### dump uint\_8数组
+
+记得这是使用c中超级常用的一个场景了，比如构造了一个报文，然后想查看下报文内容，报文包一般都是uint\_8类型的字符数组，建立dump函数查看整个包就很常用了。
+
+我在云风的pbc项目中看到dump函数，适合很多地方使用:
+
+```c
+static void
+dump(uint8_t *buffer, int sz) {
+	int i , j;
+	for (i=0;i<sz;i++) {
+		printf("%02X ",buffer[i]);
+		if (i % 16 == 15) {
+			for (j = 0 ;j <16 ;j++) {
+				char c = buffer[i/16 * 16+j];
+				if (c>=32 && c<127) {
+					printf("%c",c);
+				} else {
+					printf(".");
+				}
+			}
+			printf("\n");
+		}
+	}
+
+	printf("\n");
+}
+```
+
+结果:
+
+```
+0A 06 41 6C 69 63 65 00 10 B9 60 1A 0D 61 6C 69 ..Alice...`..ali
+63 65 40 75 6E 6B 6F 77 6E 00 50 B1 A8 03 2A 0A ce@unkown.P...*.
+85 FF FF FF 0F B9 60 87 AD 4B 22 0B 0A 09 38 37 ......`..K"...87
+36 35 34 33 32 31 00 22 10 0A 0C 31 33 39 30 31 654321."...13901
+32 33 34 35 36 37 00 10 00
+```
+
+### epoll
+
+最初接触网络编程就是使用epoll。在旅住到[handy](https://github.com/yedf/handy)项目时，看到了一个epoll的好例子，是c++写的，便摘抄下来。
+
+见`epoll`目录。
