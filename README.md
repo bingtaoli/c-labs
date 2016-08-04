@@ -118,3 +118,29 @@ for (;;){
 ```
 
 详细demo见`epoll`目录中代码及文档。
+
+### 平台检测
+
+程序编译的时候如果有平台限制的话，会使用宏来做一个依赖检测.
+
+```cpp
+#ifdef OS_LINUX
+#include <sys/epoll.h>
+#elif defined(OS_MACOSX)
+#include <sys/event.h>
+#else
+#error "platform unsupported"
+#endif
+```
+
+### 多线程优雅退出
+
+```c
+// In Child Thread
+while (!stop){
+    //do something
+}
+// In parent Thread
+stop = true; //then child thread will go die
+```
+
