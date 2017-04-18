@@ -19,7 +19,7 @@
 using namespace std;
 
 
-bool output_log = true;
+bool output_log = false;
 
 #define exit_if(r, ...) if(r) {printf(__VA_ARGS__); printf("%s:%d error no: %d error msg %s\n", __FILE__, __LINE__, errno, strerror(errno)); exit(1);}
 
@@ -35,8 +35,6 @@ void updateEvents(int efd, int fd, int events, int op) {
     memset(&ev, 0, sizeof(ev));
     ev.events = events;
     ev.data.fd = fd;
-    printf("%s fd %d events read %d write %d\n",
-           op==EPOLL_CTL_MOD?"mod":"add", fd, ev.events & EPOLLIN, ev.events & EPOLLOUT);
     int r = epoll_ctl(efd, op, fd, &ev);
     exit_if(r, "epoll_ctl failed");
 }
@@ -46,63 +44,49 @@ void handleAccept(int efd, int fd) {
     socklen_t rsz = sizeof(raddr);
     int cfd = accept(fd,(struct sockaddr *)&raddr,&rsz);
     exit_if(cfd<0, "accept failed");
-    sockaddr_in peer, local;
+    sockaddr_in peer;
     socklen_t alen = sizeof(peer);
     int r = getpeername(cfd, (sockaddr*)&peer, &alen);
     exit_if(r<0, "getpeername failed");
-    printf("accept a connection from %s\n", inet_ntoa(raddr.sin_addr));
+    printf("accept new connection from %s\n", inet_ntoa(raddr.sin_addr));
     setNonBlock(cfd);
     updateEvents(efd, cfd, EPOLLIN, EPOLL_CTL_ADD);
 }
+
 struct Con {
     string readed;
     size_t written;
     bool writeEnabled;
     Con(): written(0), writeEnabled(false) {}
 };
+
 map<int, Con> cons;
 
-string httpRes;
+char httpRes[8192];
 void sendRes(int efd, int fd) {
     Con& con = cons[fd];
-    if (!con.readed.length()) {
-        if (con.writeEnabled) {
-            updateEvents(efd, fd, EPOLLIN, EPOLL_CTL_MOD);
-            con.writeEnabled = false;
-        }
-        return;
-    }
-    size_t left = httpRes.length() - con.written;
+    size_t left = strlen(httpRes) - con.written;
+    printf("httpRes length is: %zu\n", strlen(httpRes));
     int wd = 0;
-    while((wd=::write(fd, httpRes.data()+con.written, left))>0) {
+    while (left > 0){
+        if ((wd = ::write(fd, httpRes + con.written, left)) <= 0){
+            if (errno == EINTR)  /* interrupted by sig handler return */
+                wd = 0;          /* and call write() again */
+            else {
+                printf("write error, exit sendRes\n");
+                return; 
+            }
+        }
         con.written += wd;
         left -= wd;
-        if(output_log) printf("write %d bytes left: %lu\n", wd, left);
-    };
-    if (left == 0) {
-//        close(fd);
-        cons.erase(fd);
-        return;
     }
-    if (wd < 0 &&  (errno == EAGAIN || errno == EWOULDBLOCK)) {
-        if (!con.writeEnabled) {
-            updateEvents(efd, fd, EPOLLIN|EPOLLOUT, EPOLL_CTL_MOD);
-            con.writeEnabled = true;
-        }
-        return;
-    }
-    if (wd<=0) {
-        printf("write error for %d: %d %s\n", fd, errno, strerror(errno));
-        close(fd);
-        cons.erase(fd);
-    }
+    return;
 }
 
 void handleRead(int efd, int fd) {
     char buf[4096];
     int n = 0;
     while ((n=::read(fd, buf, sizeof buf)) > 0) {
-        if(output_log) printf("read %d bytes\n", n);
         string& readed = cons[fd].readed;
         readed.append(buf, n);
         if (readed.length()>4) {
@@ -116,21 +100,17 @@ void handleRead(int efd, int fd) {
         return;
     //实际应用中，n<0应当检查各类错误，如EINTR
     if (n < 0) {
-        printf("read %d error: %d %s\n", fd, errno, strerror(errno));
+        printf("fd: %d read error, errno: %d %s\n", fd, errno, strerror(errno));
     }
+    printf("ready to close socket file\n");
     close(fd);
     cons.erase(fd);
-}
-
-void handleWrite(int efd, int fd) {
-    sendRes(efd, fd);
 }
 
 void loop_once(int efd, int lfd, int waitms) {
     const int kMaxEvents = 20;
     struct epoll_event activeEvs[100];
     int n = epoll_wait(efd, activeEvs, kMaxEvents, waitms);
-    if(output_log) printf("epoll_wait return %d\n", n);
     for (int i = 0; i < n; i ++) {
         int fd = activeEvs[i].data.fd;
         int events = activeEvs[i].events;
@@ -140,9 +120,6 @@ void loop_once(int efd, int lfd, int waitms) {
             } else {
                 handleRead(efd, fd);
             }
-        } else if (events & EPOLLOUT) {
-            if(output_log) printf("handling epollout\n");
-            handleWrite(efd, fd);
         } else {
             exit_if(1, "unknown event");
         }
@@ -151,11 +128,12 @@ void loop_once(int efd, int lfd, int waitms) {
 
 int main(int argc, const char* argv[]) {
     if (argc > 1) { output_log = false; }
+    // 按照SIG_IGN来处理SIGPIPE，可以防止write的报错
     ::signal(SIGPIPE, SIG_IGN);
-    httpRes = "HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: 1048576\r\n\r\n123456";
-    for(int i=0;i<1048570;i++) {
-        httpRes+='\0';
-    }
+    sprintf(httpRes, "HTTP/1.1 200 OK\r\n");
+    sprintf(httpRes, "%sConnection: Keep-Alive\r\nContent-Type: text/html; charset=UTF-8\r\n", httpRes);
+    char body[100] = "hello, world\n";
+    sprintf(httpRes, "%sContent-Length: %zu\r\n\r\n%s", httpRes, strlen(body), body);
     short port = 80;
     int epollfd = epoll_create(1);
     exit_if(epollfd < 0, "epoll_create failed");
