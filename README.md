@@ -143,4 +143,4 @@ for (;;){
 
 ### 大数相乘
 
-博客`http://www.jianshu.com/p/b5af56d676b2`，博主介绍了使用分治实现大数相乘，指的学习。见`big_number_multiply`目录。
+博客`http://www.jianshu.com/p/b5af56d676b2`，博主介绍了使用分治实现大数相乘，值得学习。见`big_number_multiply`目录。
