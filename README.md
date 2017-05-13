@@ -144,3 +144,7 @@ for (;;){
 ### 大数相乘
 
 博客`http://www.jianshu.com/p/b5af56d676b2`，博主介绍了使用分治实现大数相乘，值得学习。见`big_number_multiply`目录。
+
+### 快速排序
+
+鉴于太基础了，所以加上。见`quick_sort`目录，有相应文档。
