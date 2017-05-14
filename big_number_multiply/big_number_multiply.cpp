@@ -87,7 +87,6 @@ string subtract(string &x, string &y) {
     int len_x = x.length();
     int len_y = y.length();
     int len = len_x > len_y ? len_x : len_y;
-    int *tempResult = (int *) malloc(sizeof(int) * len);
 
     string sign;
     if (len_x > len_y) {// x - y为正数
@@ -106,13 +105,13 @@ string subtract(string &x, string &y) {
                 break;
             }
         }
-
         //说明没有break，说明x == y
         if (i == len_x) {
             return "0";
         }
     }
 
+    int *tempResult = (int *) malloc(sizeof(int) * len);
     //反转字符串方便相减
     reverse(x.begin(), x.end());
     reverse(y.begin(), y.end());
@@ -140,7 +139,7 @@ string subtract(string &x, string &y) {
     for (int i = q; i >= 0; i--) {
         result += int2Str(tempResult[i]);
     }
-
+    free(tempResult);
     if (sign.at(0) == '-')return sign + result;
     return result;
 }
