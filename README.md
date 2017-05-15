@@ -86,52 +86,7 @@ dump(uint8_t *buffer, int sz) {
 
 最初接触网络编程就是使用epoll。在旅住到[handy](https://github.com/yedf/handy)项目时，看到了一个epoll的好例子，是c++写的，便摘抄下来。
 
-在handy中的epoll主要步骤如下:
-
-```cpp
-int epollfd = epoll_create(1);
-exitif(epollfd<0, "epoll create failed");
-int listenfd = socket(AF_INET, SOCK_STREAM, 0);
-exitif(listenfd <0, "socket failed");
-struct sockaddr_in addr;
-memset(&addr, 0, sizeof(addr));
-addr.sin_family = AF_INET;
-addr.sin_port = htons(port);
-addr.sin_addr.s_addr = INADDR_ANY;
-bind(listenfs, (struct sockaddr *)&addr, sizeof(struct sockadd));
-listen(listenfd, 20);
-setNonBlock(listenfd);
-//add listenfd to epoll
-struct epoll_event ev;
-memset(&ev, 0, sizeof(ev));
-ev.events =EPOLLIN;
-ev.data.fd = fd;
-epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
-//loop
-for (;;){
-    const int kMaxEvents = 20;
-    struct epoll_events activeEvs[100];
-    int n = epoll_wait(efd, activeEvs, kMaxEvents, 10000); //10000代表ms
-    if (int i = 0; i < n; i++){
-        int fd = activeEvs[i].data.fd;
-        int events = activeEvs[i].events;
-        if (events & (EPOLLIN | EPOLLERR)){ //可读
-            //什么时候fd会等于listenfd呢？见epoll目录中的文档
-            if (fd == listenfd){ 
-                handleAccept(efd, fd);
-            } else {
-                handleRead(efd, fd);
-            }
-        } else if (events & EPOLLOUT){
-            handleWrite(efd, fd); //可写
-        } else {
-            exif(1, "unknow event");
-        }
-    }
-}
-```
-
-详细demo见`epoll`目录中代码及文档。
+详细见`epoll`目录中代码及文档。在epoll目录中可以看到**socket服务端**的初始化过程。
 
 ### reverse list
 
@@ -148,3 +103,8 @@ for (;;){
 ### 快速排序
 
 鉴于太基础了，所以加上。见`quick_sort`目录，有相应文档。
+
+### KMP算法
+
+在一个子串中查找另一个子串的第一个位置，暴力算法的时间为N^2，时间有点长。使用KMP算法时间复杂度为`Ｏ(n+m)`。见`kmp`目录。
+
