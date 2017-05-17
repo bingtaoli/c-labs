@@ -108,3 +108,25 @@ dump(uint8_t *buffer, int sz) {
 
 在一个子串中查找另一个子串的第一个位置，暴力算法的时间为N^2，时间有点长。使用KMP算法时间复杂度为`Ｏ(n+m)`。见`kmp`目录。
 
+### strncpy
+
+面试常问题目，但是没有了解过这个函数的朋友很容易写错。
+
+关于strncpy的注意点，见`http://blog.haipo.me/?p=1065`
+
+```c
+char *my_strncpy(char *dst, const char *src, int n){
+    int i = 0;
+    while (i < n && src[i] != '\0'){
+        dst[i] = src[i];
+        i += 1;
+    }
+    // strncpy 还会把 dest 剩下的部分全部置为 0
+    while (i < n){
+        dst[i] = '\0';
+        i += 1;
+    }
+    // 没有补0
+    return dst;
+}
+```
