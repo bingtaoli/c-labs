@@ -1,4 +1,4 @@
-> C语言是一门非常棒的编程语言，也是我最喜欢的编程语言，在使用它的时候，总是感觉到编程的乐趣，感叹前人设计的精妙。所以有了这个仓库，记录使用c的时候的一些经历。
+> C语言是一门非常棒的编程语言，也是我最喜欢的编程语言，在使用它的时候，总是感觉到编程的乐趣，所以有了这个仓库，记录使用c的时候的一些经历。
 
 ### tlv解析
 
@@ -128,5 +128,41 @@ char *my_strncpy(char *dst, const char *src, int n){
     }
     // 没有补0
     return dst;
+}
+```
+
+### 深度优先和广度优先
+
+这个是数据结构很基础的知识。
+
+```
+                A
+           B           C
+      D   E          F   G
+```
+
+**深度优先**
+
+Depth First Search的顺序是`A B D E C F G`，可以使用递归实现。
+
+**广度优先**
+
+Breadth First Search顺序是：`A B C D E F G`。借助队列数据结构，由于队列是先进先出的顺序，因此可以先将左子树入队，然后再将右子树入队。
+
+顺序是访问A时A，B入队列，C入队列；访问B时，D如队列，E入队列。这样不断递归。
+
+```cpp
+void widthFirstTraverse(TNode* root) {
+  queue<TNode*> q;   // 队列
+  q.enqueue(root);
+  TNode* p;
+  while(q.hasElement()) {
+   p = q.dequeue();  // 队首元素出队列
+   visit(p);     // 访问p结点
+   if(p->left)
+     q.enqueue(p->left);
+   if(p->right)
+     q.enqueue(p->right);
+  } 
 }
 ```
