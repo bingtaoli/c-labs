@@ -12,7 +12,7 @@ memset(&addr, 0, sizeof(addr));
 addr.sin_family = AF_INET;
 addr.sin_port = htons(port);
 addr.sin_addr.s_addr = INADDR_ANY;
-bind(listenfs, (struct sockaddr *)&addr, sizeof(struct sockadd));
+bind(listenfd, (struct sockaddr *)&addr, sizeof(struct sockadd));
 listen(listenfd, 20);
 ```
 
@@ -23,6 +23,7 @@ listen(listenfd, 20);
 在`handy`项目中的epoll主要步骤如下:
 
 ```cpp
+// raw_examples
 int epollfd = epoll_create(1);
 exitif(epollfd<0, "epoll create failed");
 int listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,7 +33,7 @@ memset(&addr, 0, sizeof(addr));
 addr.sin_family = AF_INET;
 addr.sin_port = htons(port);
 addr.sin_addr.s_addr = INADDR_ANY;
-bind(listenfs, (struct sockaddr *)&addr, sizeof(struct sockadd));
+bind(listenfd, (struct sockaddr *)&addr, sizeof(struct sockadd));
 listen(listenfd, 20);
 setNonBlock(listenfd);
 //add listenfd to epoll
