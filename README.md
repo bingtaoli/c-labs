@@ -1,14 +1,4 @@
-> C语言是一门非常棒的编程语言，也是我最喜欢的编程语言，在使用它的时候，总是感觉到编程的乐趣，所以有了这个仓库，记录使用c的时候的一些经历。
-
-### tlv解析
-
-感谢来自开源中国的[Tlv-协议的C语言实现](http://www.oschina.net/code/snippet_2372099_48227)
-
-作者[Listening2009](http://my.oschina.net/u/2372099)封装的tlv库我正好使用上了，所以把此项目附上。见`tlv`目录
-
-### simple hash
-
-看[一篇介绍php的博文中的简单hash样例](http://www.php-internals.com/book/?p=chapt03/03-01-01-hashtable),原作者的代码也在[github](https://github.com/reeze/tipi/tree/master/book/sample/chapt03/03-01-01-hashtable)上，我这就拿来一份作为自己的工具。见`simple-hash`目录
+> C语言是一门非常棒的编程语言，也是我最喜欢的编程语言。所以有了这个仓库，记录使用c的时候的一些经历。
 
 ### linux process communication
 
@@ -17,6 +7,15 @@ linux进程间通信，可以看看个人博客中的读书笔记。
 + 消息队列，见`linux_process_communication/msgtest.c`文件。在该文件中只是使用了简单地使用了消息队列进行读写，并未涉及进程间的通信:)，以后有时间补上。
 + 共享内存，见`linux_process_communication/shmtest.c`文件。
 
+### tlv解析
+
+摘自[Tlv-协议的C语言实现](http://www.oschina.net/code/snippet_2372099_48227)
+
+作者[Listening2009](http://my.oschina.net/u/2372099)封装的tlv库我正好使用上了，所以把此项目附上。见`tlv`目录
+
+### simple hash
+
+看[一篇介绍php的博文中的简单hash样例](http://www.php-internals.com/book/?p=chapt03/03-01-01-hashtable),原作者的代码也在[github](https://github.com/reeze/tipi/tree/master/book/sample/chapt03/03-01-01-hashtable)上，我这就拿来一份作为自己的工具。见`simple-hash`目录
 
 ### 平台检测
 
@@ -96,18 +95,6 @@ dump(uint8_t *buffer, int sz) {
 
 见`reverse_list`目录
 
-### 大数相乘
-
-博客`http://www.jianshu.com/p/b5af56d676b2`，博主介绍了使用分治实现大数相乘，值得学习。见`big_number_multiply`目录。
-
-### 快速排序
-
-鉴于太基础了，所以加上。见`quick_sort`目录，有相应文档。
-
-### KMP算法
-
-在一个子串中查找另一个子串的第一个位置，暴力算法的时间为N^2，时间有点长。使用KMP算法时间复杂度为`Ｏ(n+m)`。见`kmp`目录。
-
 ### strncpy
 
 面试常问题目，但是没有了解过这个函数的朋友很容易写错。
@@ -130,6 +117,18 @@ char *my_strncpy(char *dst, const char *src, int n){
     return dst;
 }
 ```
+
+### 大数相乘
+
+博客`http://www.jianshu.com/p/b5af56d676b2`，博主介绍了使用分治实现大数相乘，值得学习。见`big_number_multiply`目录。
+
+### 快速排序
+
+鉴于太基础了，所以加上。见`quick_sort`目录，有相应文档。
+
+### KMP算法
+
+在一个子串中查找另一个子串的第一个位置，暴力算法的时间为N^2，时间有点长。使用KMP算法时间复杂度为`Ｏ(n+m)`。见`kmp`目录。
 
 ### 深度优先和广度优先
 
@@ -166,3 +165,24 @@ void widthFirstTraverse(TNode* root) {
   } 
 }
 ```
+
+### 锁的使用
+
+在c++项目中，如果使用了多线程一般都涉及到锁的使用。muduo中也使用了锁。muduo使用namespace来控制锁的作用域。比如：
+
+```cpp
+void EventLoop::queueInLoop(const Functor& cb)
+{
+  {
+  MutexLockGuard lock(mutex_);
+  pendingFunctors_.push_back(cb);
+  }
+
+  if (!isInLoopThread() || callingPendingFunctors_)
+  {
+    wakeup();
+  }
+}
+```
+
+其中lock的作用域仅限于`{}`这个namespace中。
