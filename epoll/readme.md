@@ -5,18 +5,21 @@ socket服务端的创建非常基础，虽然日常使用不多。
 由于结构体名称很难记，宏名称很难记，往往手写不切实际，所以需要记录下来。
 
 ```cpp
+// SOCK_STREAM: 提供双向连续且可信赖的数据流, 即TCP.
+// AF_INET: Ipv4 网络协议
 int listenfd = socket(AF_INET, SOCK_STREAM, 0);
 exitif(listenfd <0, "socket failed");
 struct sockaddr_in addr;
 memset(&addr, 0, sizeof(addr));
 addr.sin_family = AF_INET;
+// htons: 转为网络序，网络序是大端字节存储
 addr.sin_port = htons(port);
 addr.sin_addr.s_addr = INADDR_ANY;
 bind(listenfd, (struct sockaddr *)&addr, sizeof(struct sockadd));
 listen(listenfd, 20);
 ```
 
-经过上面，一个监听port端口的服务就起来了，目前是阻塞的，可以while循环一直等待accept。
+经过上面，一个监听port端口的服务就起来了，目前是阻塞的，可以while循环一直等待accept。提下`htons`函数，TCP规定网络序是大端存储，即高位地址存储高位数据。
 
 ## epoll
 
