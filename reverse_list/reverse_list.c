@@ -8,43 +8,43 @@
  * */
 
 typedef struct node_t {
-	int value;
-	struct node_t *next;
+    int value;
+    struct node_t *next;
 } Node;
 
 Node * reverse_list(Node *head){
-	Node *slow = NULL;
-	Node *fast = head;
-	Node *faster = NULL;
-	while (fast){
-		faster = fast->next;
-		fast->next = slow;
-		slow = fast;
-		fast = faster;
-	}
-	return slow;
+    Node *slow = NULL;
+    Node *fast = head;
+    Node *faster = NULL;
+    while (fast){
+        faster = fast->next;
+        fast->next = slow;
+        slow = fast;
+        fast = faster;
+    }
+    return slow;
 }
 
 void dump_list(Node *p){
-	while (p != NULL){
-		printf("%d ", p->value);
-		p = p->next;
-	}
-	printf("\n");
+    while (p != NULL){
+        printf("%d ", p->value);
+        p = p->next;
+    }
+    printf("\n");
 }
 
 int main(){
-	Node first = {1, NULL};
-	Node second = {2, NULL};
-	Node third = {3, NULL};
-	Node fourth = {4, NULL};
-	Node fifth = {5, NULL};
-	first.next = &second;
-	second.next = &third;
-	third.next = &fourth;
-	fourth.next = &fifth;
-	dump_list(&first);
-	Node *result = reverse_list(&first);
-	dump_list(result);
-	return 0;
+    Node first = {1, NULL};
+    Node second = {2, NULL};
+    Node third = {3, NULL};
+    Node fourth = {4, NULL};
+    Node fifth = {5, NULL};
+    first.next = &second;
+    second.next = &third;
+    third.next = &fourth;
+    fourth.next = &fifth;
+    dump_list(&first);
+    Node *result = reverse_list(&first);
+    dump_list(result);
+    return 0;
 }

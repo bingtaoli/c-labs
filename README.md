@@ -51,23 +51,23 @@ stop = true; //then child thread will go die
 ```c
 static void
 dump(uint8_t *buffer, int sz) {
-	int i , j;
-	for (i=0;i<sz;i++) {
-		printf("%02X ",buffer[i]);
-		if (i % 16 == 15) {
-			for (j = 0 ;j <16 ;j++) {
-				char c = buffer[i/16 * 16+j];
-				if (c>=32 && c<127) {
-					printf("%c",c);
-				} else {
-					printf(".");
-				}
-			}
-			printf("\n");
-		}
-	}
+    int i , j;
+    for (i=0;i<sz;i++) {
+        printf("%02X ",buffer[i]);
+        if (i % 16 == 15) {
+            for (j = 0 ;j <16 ;j++) {
+                char c = buffer[i/16 * 16+j];
+                if (c>=32 && c<127) {
+                    printf("%c",c);
+                } else {
+                    printf(".");
+                }
+            }
+            printf("\n");
+        }
+    }
 
-	printf("\n");
+    printf("\n");
 }
 ```
 
