@@ -186,3 +186,8 @@ void EventLoop::queueInLoop(const Functor& cb)
 ```
 
 其中lock的作用域仅限于`{}`这个namespace中。
+
+### lru-cache
+
+借鉴了open-resty的lru-cache的lua实现，改用c++实现了一遍，觉得春哥的实现方案很容易理解。不容易出错。
+见lru-cache目录。
