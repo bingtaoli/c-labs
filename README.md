@@ -187,7 +187,11 @@ void EventLoop::queueInLoop(const Functor& cb)
 
 其中lock的作用域仅限于`{}`这个namespace中。
 
-### lru-cache
+### lru-cache缓存
 
 借鉴了open-resty的lru-cache的lua实现，改用c++实现了一遍，觉得春哥的实现方案很容易理解。不容易出错。
 见lru-cache目录。
+
+### mergeSort归并排序
+
+归并排序需要用到额外的空间作为辅助，采用的是分治算法的思想。具体见merge-sort目录
