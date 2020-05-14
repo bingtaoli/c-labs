@@ -21,6 +21,7 @@ isFull()：检查双端队列是否满了。
 
 //设计思路：使用环形双向链表，第一个Node不作存储，只做标识作用
 #include <iostream>
+#include <thread>
 using namespace std;
 
 class MyCircularDeque {
@@ -52,6 +53,7 @@ public:
     /** Adds an item at the front of Deque. Return true if the operation is successful. */
     bool insertFront(int value) 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == capcity)
     	{
     		return false;
@@ -69,6 +71,7 @@ public:
     /** Adds an item at the rear of Deque. Return true if the operation is successful. */
     bool insertLast(int value) 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == capcity)
     	{
     		return false;
@@ -86,6 +89,7 @@ public:
     /** Deletes an item from the front of Deque. Return true if the operation is successful. */
     bool deleteFront() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == 0)
     	{
     		return false;
@@ -103,6 +107,7 @@ public:
     /** Deletes an item from the rear of Deque. Return true if the operation is successful. */
     bool deleteLast() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == 0)
     	{
     		return false;
@@ -118,6 +123,7 @@ public:
     /** Get the front item from the deque. */
     int getFront() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == 0)
     	{
     		return -1;
@@ -132,6 +138,7 @@ public:
     /** Get the last item from the deque. */
     int getRear() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	if (size == 0)
     	{
     		return -1;
@@ -146,12 +153,14 @@ public:
     /** Checks whether the circular deque is empty or not. */
     bool isEmpty() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	return size == 0;
     }
     
     /** Checks whether the circular deque is full or not. */
     bool isFull() 
     {
+    	std::lock_guard<std::mutex> lock(m_mutex);
     	return size == capcity;
     }
 
@@ -159,6 +168,7 @@ private:
 	LinkedListNode *queue;
 	int size;
 	int capcity;
+	std::mutex m_mutex;
 };
 
 /**
